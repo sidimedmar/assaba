@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800&family=Roboto:wght@300;400;500;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Roboto", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Montserrat", sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-900 antialiased transition-colors duration-300;
+  }
+  
+  .dark body {
+    @apply bg-slate-950 text-slate-100;
+  }
+}
+
+@layer components {
+  .slide-container {
+    @apply relative w-full h-full overflow-hidden bg-white shadow-2xl rounded-lg transition-colors duration-300;
+    aspect-ratio: 16/9;
+  }
+  
+  .dark .slide-container {
+    @apply bg-slate-900 shadow-blue-900/20;
+  }
+
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-md border border-slate-200 shadow-sm transition-colors duration-300;
+  }
+
+  .dark .glass-card {
+    @apply bg-slate-800/80 border-slate-700 shadow-none;
+  }
+}
