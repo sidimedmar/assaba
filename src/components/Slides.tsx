@@ -136,6 +136,13 @@ export const Slide2 = ({ theme, selectedCentres, onExport }: { theme?: string, s
   const topInscrits = [...ELECTION_DATA].sort((a, b) => b.inscrits - a.inscrits).slice(0, 3);
   const topParticipation = [...ELECTION_DATA].sort((a, b) => b.participation - a.participation).slice(0, 3);
   
+  const totals = useMemo(() => {
+    const inscrits = ELECTION_DATA.reduce((acc, curr) => acc + curr.inscrits, 0);
+    const votes = ELECTION_DATA.reduce((acc, curr) => acc + curr.votes, 0);
+    const avgPart = ELECTION_DATA.reduce((acc, curr) => acc + curr.participation, 0) / ELECTION_DATA.length;
+    return { inscrits, votes, avgPart, count: ELECTION_DATA.length };
+  }, []);
+
   return (
     <div className={cn("flex flex-col h-full", theme === 'dark' ? "bg-slate-900" : "bg-white")}>
       <div className="bg-blue-900 text-white h-24 flex items-center justify-between px-12 relative z-20 shrink-0">
@@ -161,7 +168,7 @@ export const Slide2 = ({ theme, selectedCentres, onExport }: { theme?: string, s
           <div className="flex items-center space-x-6 opacity-80">
             <div className="text-right">
               <p className="text-xs font-bold uppercase tracking-wider text-blue-300">Total Centres</p>
-              <p className="text-xl font-bold">30</p>
+              <p className="text-xl font-bold">{ELECTION_DATA.length}</p>
             </div>
             <div className="h-8 w-px bg-blue-700" />
             <div className="text-right">
@@ -179,7 +186,7 @@ export const Slide2 = ({ theme, selectedCentres, onExport }: { theme?: string, s
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-slate-500 text-sm font-bold uppercase tracking-wide">Total Inscrits</p>
-                <h2 className={cn("font-display font-bold text-4xl mt-2", theme === 'dark' ? "text-white" : "text-slate-800")}>29 274</h2>
+                <h2 className={cn("font-display font-bold text-4xl mt-2", theme === 'dark' ? "text-white" : "text-slate-800")}>{totals.inscrits.toLocaleString()}</h2>
               </div>
               <div className="w-12 h-12 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-500">
                 <Users className="w-6 h-6" />
@@ -192,7 +199,7 @@ export const Slide2 = ({ theme, selectedCentres, onExport }: { theme?: string, s
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-slate-500 text-sm font-bold uppercase tracking-wide">Votes (Ghazouani)</p>
-                <h2 className={cn("font-display font-bold text-4xl mt-2", theme === 'dark' ? "text-white" : "text-slate-800")}>10 119</h2>
+                <h2 className={cn("font-display font-bold text-4xl mt-2", theme === 'dark' ? "text-white" : "text-slate-800")}>{totals.votes.toLocaleString()}</h2>
               </div>
               <div className="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-500">
                 <Vote className="w-6 h-6" />
@@ -205,14 +212,14 @@ export const Slide2 = ({ theme, selectedCentres, onExport }: { theme?: string, s
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-slate-500 text-sm font-bold uppercase tracking-wide">Participation Moy.</p>
-                <h2 className={cn("font-display font-bold text-4xl mt-2", theme === 'dark' ? "text-white" : "text-slate-800")}>58,8%</h2>
+                <h2 className={cn("font-display font-bold text-4xl mt-2", theme === 'dark' ? "text-white" : "text-slate-800")}>{totals.avgPart.toFixed(1)}%</h2>
               </div>
               <div className="w-12 h-12 rounded-full bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-500">
                 <Percent className="w-6 h-6" />
               </div>
             </div>
             <div className="w-full bg-slate-100 dark:bg-slate-700 h-1.5 rounded-full mt-4 overflow-hidden">
-              <div className="bg-indigo-500 h-full rounded-full" style={{ width: '58.8%' }} />
+              <div className="bg-indigo-500 h-full rounded-full" style={{ width: `${totals.avgPart}%` }} />
             </div>
           </div>
 
@@ -220,7 +227,7 @@ export const Slide2 = ({ theme, selectedCentres, onExport }: { theme?: string, s
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-slate-500 text-sm font-bold uppercase tracking-wide">Couverture</p>
-                <h2 className={cn("font-display font-bold text-4xl mt-2", theme === 'dark' ? "text-white" : "text-slate-800")}>30</h2>
+                <h2 className={cn("font-display font-bold text-4xl mt-2", theme === 'dark' ? "text-white" : "text-slate-800")}>{totals.count}</h2>
               </div>
               <div className="w-12 h-12 rounded-full bg-orange-50 dark:bg-orange-900/30 flex items-center justify-center text-orange-400">
                 <MapPin className="w-6 h-6" />

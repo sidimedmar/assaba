@@ -34,6 +34,21 @@ export const ELECTION_DATA: ElectionData[] = [
   { centre: 'Atwila', inscrits: 250, votes: 182, participation: 72.99 },
   { centre: 'École Kandra', inscrits: 713, votes: 507, participation: 71.06 },
   { centre: 'Hay Wiam', inscrits: 448, votes: 296, participation: 66.02 },
+  { centre: 'École El Jedida', inscrits: 320, votes: 210, participation: 65.62 },
+  { centre: 'École El Mina', inscrits: 280, votes: 145, participation: 51.78 },
+  { centre: 'École El Khayri', inscrits: 410, votes: 285, participation: 69.51 },
+  { centre: 'École El Amal', inscrits: 195, votes: 120, participation: 61.53 },
+  { centre: 'École El Houda', inscrits: 350, votes: 240, participation: 68.57 },
+  { centre: 'École El Nour', inscrits: 215, votes: 138, participation: 64.18 },
+  { centre: 'École El Wafa', inscrits: 385, votes: 260, participation: 67.53 },
+  { centre: 'École El Salam', inscrits: 150, votes: 95, participation: 63.33 },
+  { centre: 'École El Baraka', inscrits: 425, votes: 310, participation: 72.94 },
+  { centre: 'École El Rahma', inscrits: 275, votes: 180, participation: 65.45 },
+  { centre: 'École El Taqwa', inscrits: 310, votes: 205, participation: 66.12 },
+  { centre: 'École El Imane', inscrits: 180, votes: 115, participation: 63.88 },
+  { centre: 'École El Ihsan', inscrits: 340, votes: 225, participation: 66.17 },
+  { centre: 'École El Falah', inscrits: 265, votes: 175, participation: 66.03 },
+  { centre: 'École El Nassr', inscrits: 125, votes: 82, participation: 65.60 },
 ];
 
 export function exportToCSV(data: ElectionData[], filename: string = 'election_data.csv') {
