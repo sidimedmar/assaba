@@ -78,7 +78,7 @@ export const Slide1 = ({ theme, selectedCentres, onExport }: { theme?: string, s
       </div>
       <div className="z-20">
         <h3 className="font-display font-bold text-2xl mb-4 text-white">Contexte</h3>
-        <p className="text-blue-100 leading-relaxed mb-2 text-lg">Élections Locales</p>
+        <p className="text-blue-100 leading-relaxed mb-2 text-lg">Élections Présidentielles</p>
         <p className="text-blue-200 text-sm font-light">Analyse détaillée par centre de vote</p>
       </div>
       <div className="z-20 mb-4 opacity-80">
@@ -88,7 +88,7 @@ export const Slide1 = ({ theme, selectedCentres, onExport }: { theme?: string, s
         </div>
         <div className="flex items-center space-x-3">
           <Users className="w-4 h-4 text-blue-300" />
-          <p className="text-sm">Ecole Hassi El Bekay</p>
+          <p className="text-sm">2024</p>
         </div>
       </div>
     </div>
@@ -166,7 +166,7 @@ export const Slide2 = ({ theme, selectedCentres, onExport }: { theme?: string, s
             <div className="h-8 w-px bg-blue-700" />
             <div className="text-right">
               <p className="text-xs font-bold uppercase tracking-wider text-blue-300">Date</p>
-              <p className="text-lg">Ecole Hassi El Bekay</p>
+              <p className="text-lg">2024</p>
             </div>
           </div>
         </div>
@@ -672,7 +672,7 @@ export const Slide6 = ({ theme, selectedCentres, onExport }: { theme?: string, s
       </div>
     </div>
     <div className={cn("h-12 flex items-center justify-between px-12 text-xs", theme === 'dark' ? "bg-slate-950 text-slate-500" : "bg-slate-800 text-slate-400")}>
-      <p>© 2026 Analyse Électorale - Confidentiel</p>
+      <p>© 2024 Analyse Électorale - Confidentiel</p>
       <div className="flex space-x-4">
         <p>Page 06</p>
         <p>|</p>

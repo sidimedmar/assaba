@@ -138,7 +138,7 @@ export default function App() {
               "text-2xl font-display font-bold transition-colors",
               theme === 'dark' ? "text-white" : "text-slate-900"
             )}>Présentation Électorale</h1>
-            <p className="text-slate-500 text-sm">Municipalité de Kiffa • Ecole Hassi El Bekay</p>
+            <p className="text-slate-500 text-sm">Municipalité de Kiffa • 2024</p>
           </div>
           
           <div className="flex items-center flex-wrap gap-2">
