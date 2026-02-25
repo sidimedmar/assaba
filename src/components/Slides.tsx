@@ -24,12 +24,44 @@ import {
   CheckCircle2,
   Lightbulb,
   Target,
-  Settings
+  Settings,
+  Download
 } from 'lucide-react';
 import { ELECTION_DATA, cn } from '../lib/utils';
 
+const CustomTooltip = ({ active, payload, label, theme }: any) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+    return (
+      <div className={cn(
+        "p-4 rounded-xl shadow-2xl border min-w-[200px]", 
+        theme === 'dark' ? "bg-slate-900 border-slate-700 text-white" : "bg-white border-slate-100 text-slate-800"
+      )}>
+        <p className="font-display font-bold mb-2 border-b pb-1 border-slate-200 dark:border-slate-700">{label}</p>
+        <div className="space-y-1.5 text-sm">
+          <div className="flex justify-between gap-6">
+            <span className="text-slate-500 dark:text-slate-400">Inscrits:</span>
+            <span className="font-bold">{data.inscrits.toLocaleString()}</span>
+          </div>
+          <div className="flex justify-between gap-6">
+            <span className="text-slate-500 dark:text-slate-400">Votes:</span>
+            <span className="font-bold text-blue-500">{data.votes.toLocaleString()}</span>
+          </div>
+          <div className="flex justify-between gap-6">
+            <span className="text-slate-500 dark:text-slate-400">Participation:</span>
+            <span className={cn("font-bold", data.participation > 60 ? "text-emerald-500" : "text-orange-500")}>
+              {data.participation}%
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  return null;
+};
+
 // --- Slide 1: Title Slide ---
-export const Slide1 = ({ theme, selectedCentres }: { theme?: string, selectedCentres?: string[] }) => (
+export const Slide1 = ({ theme, selectedCentres, onExport }: { theme?: string, selectedCentres?: string[], onExport?: () => void }) => (
   <div className={cn("flex h-full w-full", theme === 'dark' ? "bg-slate-900" : "bg-white")}>
     <div className="w-1/3 bg-blue-900 text-white flex flex-col justify-between p-12 relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
@@ -56,7 +88,7 @@ export const Slide1 = ({ theme, selectedCentres }: { theme?: string, selectedCen
         </div>
         <div className="flex items-center space-x-3">
           <Users className="w-4 h-4 text-blue-300" />
-          <p className="text-sm">Février 2026</p>
+          <p className="text-sm">Ecole Hassi El Bekay</p>
         </div>
       </div>
     </div>
@@ -71,7 +103,7 @@ export const Slide1 = ({ theme, selectedCentres }: { theme?: string, selectedCen
           <span className="text-blue-900 dark:text-blue-400">Électorale</span>
         </h1>
         <h2 className={cn("font-display font-light text-5xl mb-10 border-b-2 pb-8 inline-block", theme === 'dark' ? "text-slate-400 border-slate-800" : "text-slate-600 border-slate-200")}>
-          Municipalité de Kéfa
+          Municipalité de Kiffa
         </h2>
         <div className="flex items-start space-x-4 mb-12 max-w-2xl">
           <Info className="w-6 h-6 text-blue-500 shrink-0 mt-1" />
@@ -100,7 +132,7 @@ export const Slide1 = ({ theme, selectedCentres }: { theme?: string, selectedCen
 );
 
 // --- Slide 2: Overview ---
-export const Slide2 = ({ theme, selectedCentres }: { theme?: string, selectedCentres?: string[] }) => {
+export const Slide2 = ({ theme, selectedCentres, onExport }: { theme?: string, selectedCentres?: string[], onExport?: () => void }) => {
   const topInscrits = [...ELECTION_DATA].sort((a, b) => b.inscrits - a.inscrits).slice(0, 3);
   const topParticipation = [...ELECTION_DATA].sort((a, b) => b.participation - a.participation).slice(0, 3);
   
@@ -113,18 +145,29 @@ export const Slide2 = ({ theme, selectedCentres }: { theme?: string, selectedCen
           </div>
           <div>
             <h1 className="font-display font-bold text-3xl">Vue d'ensemble</h1>
-            <p className="text-blue-200 text-sm font-light">Indicateurs clés de performance - Municipalité de Kéfa</p>
+            <p className="text-blue-200 text-sm font-light">Indicateurs clés de performance - Municipalité de Kiffa</p>
           </div>
         </div>
-        <div className="flex items-center space-x-6 opacity-80">
-          <div className="text-right">
-            <p className="text-xs font-bold uppercase tracking-wider text-blue-300">Total Centres</p>
-            <p className="text-xl font-bold">30</p>
-          </div>
-          <div className="h-8 w-px bg-blue-700" />
-          <div className="text-right">
-            <p className="text-xs font-bold uppercase tracking-wider text-blue-300">Date</p>
-            <p className="text-lg">Fév 2026</p>
+        <div className="flex items-center space-x-6">
+          {onExport && (
+            <button 
+              onClick={onExport}
+              className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-all border border-white/20 text-sm font-bold"
+            >
+              <Download className="w-4 h-4" />
+              <span>Exporter CSV</span>
+            </button>
+          )}
+          <div className="flex items-center space-x-6 opacity-80">
+            <div className="text-right">
+              <p className="text-xs font-bold uppercase tracking-wider text-blue-300">Total Centres</p>
+              <p className="text-xl font-bold">30</p>
+            </div>
+            <div className="h-8 w-px bg-blue-700" />
+            <div className="text-right">
+              <p className="text-xs font-bold uppercase tracking-wider text-blue-300">Date</p>
+              <p className="text-lg">Ecole Hassi El Bekay</p>
+            </div>
           </div>
         </div>
       </div>
@@ -249,7 +292,7 @@ export const Slide2 = ({ theme, selectedCentres }: { theme?: string, selectedCen
 };
 
 // --- Slide 3: Votes Chart ---
-export const Slide3 = ({ selectedCentres, theme }: { selectedCentres: string[], theme?: string }) => {
+export const Slide3 = ({ selectedCentres, theme, onExport }: { selectedCentres: string[], theme?: string, onExport?: () => void }) => {
   const chartData = useMemo(() => {
     if (selectedCentres.length > 0) {
       return ELECTION_DATA.filter(item => selectedCentres.includes(item.centre));
@@ -295,22 +338,7 @@ export const Slide3 = ({ selectedCentres, theme }: { selectedCentres: string[], 
                   <YAxis tick={{ fontSize: 11, fill: theme === 'dark' ? '#94a3b8' : '#64748b' }} />
                   <Tooltip 
                     cursor={{ fill: theme === 'dark' ? '#1e293b' : '#f8fafc' }}
-                    content={({ active, payload, label }) => {
-                      if (active && payload && payload.length) {
-                        const data = payload[0].payload;
-                        return (
-                          <div className={cn("p-4 rounded-xl shadow-2xl border", theme === 'dark' ? "bg-slate-900 border-slate-700 text-white" : "bg-white border-slate-100 text-slate-800")}>
-                            <p className="font-display font-bold mb-1">{label}</p>
-                            <div className="space-y-1 text-sm">
-                              <p className="flex justify-between gap-4"><span>Voix:</span> <span className="font-bold text-blue-500">{data.votes}</span></p>
-                              <p className="flex justify-between gap-4"><span>Inscrits:</span> <span className="font-bold">{data.inscrits}</span></p>
-                              <p className="flex justify-between gap-4"><span>Participation:</span> <span className="font-bold text-emerald-500">{data.participation}%</span></p>
-                            </div>
-                          </div>
-                        );
-                      }
-                      return null;
-                    }}
+                    content={<CustomTooltip theme={theme} />}
                   />
                   <Legend verticalAlign="top" height={36}/>
                   <Bar name="Nombre de voix" dataKey="votes" fill="#3b82f6" radius={[4, 4, 0, 0]}>
@@ -363,7 +391,7 @@ export const Slide3 = ({ selectedCentres, theme }: { selectedCentres: string[], 
 };
 
 // --- Slide 4: Inscrits Chart ---
-export const Slide4 = ({ selectedCentres, theme }: { selectedCentres: string[], theme?: string }) => {
+export const Slide4 = ({ selectedCentres, theme, onExport }: { selectedCentres: string[], theme?: string, onExport?: () => void }) => {
   const chartData = useMemo(() => {
     if (selectedCentres.length > 0) {
       return ELECTION_DATA.filter(item => selectedCentres.includes(item.centre));
@@ -409,22 +437,7 @@ export const Slide4 = ({ selectedCentres, theme }: { selectedCentres: string[], 
                   <YAxis tick={{ fontSize: 11, fill: theme === 'dark' ? '#94a3b8' : '#64748b' }} />
                   <Tooltip 
                     cursor={{ fill: theme === 'dark' ? '#064e3b' : '#f0fdf4' }}
-                    content={({ active, payload, label }) => {
-                      if (active && payload && payload.length) {
-                        const data = payload[0].payload;
-                        return (
-                          <div className={cn("p-4 rounded-xl shadow-2xl border", theme === 'dark' ? "bg-slate-900 border-slate-700 text-white" : "bg-white border-slate-100 text-slate-800")}>
-                            <p className="font-display font-bold mb-1">{label}</p>
-                            <div className="space-y-1 text-sm">
-                              <p className="flex justify-between gap-4"><span>Inscrits:</span> <span className="font-bold text-emerald-500">{data.inscrits}</span></p>
-                              <p className="flex justify-between gap-4"><span>Bureaux requis:</span> <span className="font-bold">{Math.ceil(data.inscrits / 800)}</span></p>
-                              <p className="flex justify-between gap-4"><span>Poids électoral:</span> <span className="font-bold">{((data.inscrits / 29274) * 100).toFixed(1)}%</span></p>
-                            </div>
-                          </div>
-                        );
-                      }
-                      return null;
-                    }}
+                    content={<CustomTooltip theme={theme} />}
                   />
                   <Legend verticalAlign="top" height={36}/>
                   <Bar name="Nombre d'inscrits" dataKey="inscrits" fill="#10b981" radius={[4, 4, 0, 0]}>
@@ -468,7 +481,7 @@ export const Slide4 = ({ selectedCentres, theme }: { selectedCentres: string[], 
 };
 
 // --- Slide 5: Participation Chart ---
-export const Slide5 = ({ selectedCentres, theme }: { selectedCentres: string[], theme?: string }) => {
+export const Slide5 = ({ selectedCentres, theme, onExport }: { selectedCentres: string[], theme?: string, onExport?: () => void }) => {
   const chartData = useMemo(() => {
     if (selectedCentres.length > 0) {
       return ELECTION_DATA.filter(item => selectedCentres.includes(item.centre));
@@ -518,21 +531,7 @@ export const Slide5 = ({ selectedCentres, theme }: { selectedCentres: string[], 
                   />
                   <Tooltip 
                     cursor={{ fill: theme === 'dark' ? '#1e1b4b' : '#eef2ff' }}
-                    content={({ active, payload, label }) => {
-                      if (active && payload && payload.length) {
-                        const data = payload[0].payload;
-                        return (
-                          <div className={cn("p-4 rounded-xl shadow-2xl border", theme === 'dark' ? "bg-slate-900 border-slate-700 text-white" : "bg-white border-slate-100 text-slate-800")}>
-                            <p className="font-display font-bold mb-1">{label}</p>
-                            <div className="space-y-1 text-sm">
-                              <p className="flex justify-between gap-4"><span>Participation:</span> <span className="font-bold text-indigo-500">{data.participation}%</span></p>
-                              <p className="flex justify-between gap-4"><span>Status:</span> <span className={cn("font-bold", data.participation > 60 ? "text-emerald-500" : "text-orange-500")}>{data.participation > 60 ? "Élevé" : "Moyen"}</span></p>
-                            </div>
-                          </div>
-                        );
-                      }
-                      return null;
-                    }}
+                    content={<CustomTooltip theme={theme} />}
                   />
                   <Legend verticalAlign="top" height={36}/>
                   <Bar name="Taux de participation" dataKey="participation" fill="#6366f1" radius={[4, 4, 0, 0]}>
@@ -576,7 +575,7 @@ export const Slide5 = ({ selectedCentres, theme }: { selectedCentres: string[], 
 };
 
 // --- Slide 6: Conclusions ---
-export const Slide6 = ({ theme, selectedCentres }: { theme?: string, selectedCentres?: string[] }) => (
+export const Slide6 = ({ theme, selectedCentres, onExport }: { theme?: string, selectedCentres?: string[], onExport?: () => void }) => (
   <div className={cn("flex flex-col h-full", theme === 'dark' ? "bg-slate-900" : "bg-white")}>
     <div className={cn("h-24 border-b flex items-center justify-between px-12 relative z-20 shrink-0", theme === 'dark' ? "border-slate-800" : "border-slate-200")}>
       <div className="flex items-center space-x-5">
@@ -585,7 +584,7 @@ export const Slide6 = ({ theme, selectedCentres }: { theme?: string, selectedCen
         </div>
         <div>
           <h1 className={cn("font-display font-extrabold text-3xl tracking-tight", theme === 'dark' ? "text-white" : "text-slate-900")}>Conclusions & Recommandations</h1>
-          <p className="text-blue-600 dark:text-blue-400 font-medium text-sm tracking-wide uppercase">Synthèse Stratégique - Municipalité de Kéfa</p>
+          <p className="text-blue-600 dark:text-blue-400 font-medium text-sm tracking-wide uppercase">Synthèse Stratégique - Municipalité de Kiffa</p>
         </div>
       </div>
       <div className="flex items-center space-x-2">
@@ -677,7 +676,7 @@ export const Slide6 = ({ theme, selectedCentres }: { theme?: string, selectedCen
       <div className="flex space-x-4">
         <p>Page 06</p>
         <p>|</p>
-        <p>Kéfa</p>
+        <p>Kiffa</p>
       </div>
     </div>
   </div>

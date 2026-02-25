@@ -12,10 +12,13 @@ import {
   Sun,
   Filter,
   Loader2,
-  X
+  X,
+  Download,
+  CheckCircle,
+  AlertCircle
 } from 'lucide-react';
 import { Slide1, Slide2, Slide3, Slide4, Slide5, Slide6 } from './components/Slides';
-import { cn, ELECTION_DATA } from './lib/utils';
+import { cn, ELECTION_DATA, exportToCSV } from './lib/utils';
 
 const slides = [
   { id: 1, component: Slide1 },
@@ -34,6 +37,26 @@ export default function App() {
   const [selectedCentres, setSelectedCentres] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showFilter, setShowFilter] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+
+  // Stats for selected centres
+  const selectedStats = useMemo(() => {
+    if (selectedCentres.length === 0) return null;
+    const filtered = ELECTION_DATA.filter(c => selectedCentres.includes(c.centre));
+    const totalInscrits = filtered.reduce((acc, curr) => acc + curr.inscrits, 0);
+    const avgParticipation = filtered.reduce((acc, curr) => acc + curr.participation, 0) / filtered.length;
+    return { totalInscrits, avgParticipation };
+  }, [selectedCentres]);
+
+  const handleExport = () => {
+    const dataToExport = selectedCentres.length > 0 
+      ? ELECTION_DATA.filter(c => selectedCentres.includes(c.centre))
+      : ELECTION_DATA;
+    
+    exportToCSV(dataToExport, `election_data_${new Date().toISOString().split('T')[0]}.csv`);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
+  };
 
   // Apply theme to document
   useEffect(() => {
@@ -115,10 +138,23 @@ export default function App() {
               "text-2xl font-display font-bold transition-colors",
               theme === 'dark' ? "text-white" : "text-slate-900"
             )}>Présentation Électorale</h1>
-            <p className="text-slate-500 text-sm">Municipalité de Kéfa • Février 2026</p>
+            <p className="text-slate-500 text-sm">Municipalité de Kiffa • Ecole Hassi El Bekay</p>
           </div>
           
           <div className="flex items-center flex-wrap gap-2">
+            {/* Export Button */}
+            <button
+              onClick={handleExport}
+              className={cn(
+                "p-2 rounded-lg transition-all duration-200 border flex items-center space-x-2 px-4",
+                theme === 'dark' ? "bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700" : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+              )}
+              title="Exporter les données en CSV"
+            >
+              <Download className="w-4 h-4" />
+              <span className="text-sm font-medium hidden sm:inline">Exporter</span>
+            </button>
+
             {/* Theme Toggle */}
             <button 
               onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
@@ -244,6 +280,55 @@ export default function App() {
         )}
       </AnimatePresence>
 
+      {/* Selected Summary */}
+      <AnimatePresence>
+        {selectedStats && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="w-full max-w-6xl mb-6"
+          >
+            <div className={cn(
+              "p-4 rounded-xl border flex items-center justify-between",
+              theme === 'dark' ? "bg-slate-900/50 border-slate-800 text-white" : "bg-blue-50 border-blue-100 text-slate-900"
+            )}>
+              <div className="flex items-center space-x-6">
+                <div className="flex items-center space-x-2">
+                  <div className="bg-blue-600 p-1.5 rounded-md">
+                    <Filter className="w-4 h-4 text-white" />
+                  </div>
+                  <span className="font-display font-bold text-sm">Résumé de la sélection</span>
+                </div>
+                <div className="flex items-center space-x-4 text-sm">
+                  <div className="flex items-center space-x-1.5">
+                    <span className="text-slate-500 dark:text-slate-400">Centres:</span>
+                    <span className="font-bold">{selectedCentres.length}</span>
+                  </div>
+                  <div className="h-4 w-px bg-slate-300 dark:bg-slate-700" />
+                  <div className="flex items-center space-x-1.5">
+                    <span className="text-slate-500 dark:text-slate-400">Total Inscrits:</span>
+                    <span className="font-bold">{selectedStats.totalInscrits.toLocaleString()}</span>
+                  </div>
+                  <div className="h-4 w-px bg-slate-300 dark:bg-slate-700" />
+                  <div className="flex items-center space-x-1.5">
+                    <span className="text-slate-500 dark:text-slate-400">Part. Moyenne:</span>
+                    <span className="font-bold text-emerald-600 dark:text-emerald-400">{selectedStats.avgParticipation.toFixed(1)}%</span>
+                  </div>
+                </div>
+              </div>
+              <button 
+                onClick={() => setSelectedCentres([])}
+                className="text-xs text-slate-500 hover:text-red-500 font-bold flex items-center space-x-1"
+              >
+                <X className="w-3 h-3" />
+                <span>Réinitialiser</span>
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Slide Container */}
       <div className={cn(
         "relative shadow-2xl overflow-hidden transition-all duration-500",
@@ -262,6 +347,7 @@ export default function App() {
             <CurrentSlideComponent 
               selectedCentres={selectedCentres} 
               theme={theme} 
+              onExport={handleExport}
             />
           </motion.div>
         </AnimatePresence>
@@ -303,17 +389,40 @@ export default function App() {
             <ChevronRight className="w-8 h-8" />
           </button>
         </div>
-
-        {/* Progress Bar */}
-        <div className="absolute bottom-0 left-0 h-1.5 bg-slate-100 dark:bg-slate-800 w-full z-50">
-          <motion.div 
-            className="h-full bg-blue-600"
-            initial={{ width: 0 }}
-            animate={{ width: `${((currentSlide + 1) / slides.length) * 100}%` }}
-            transition={{ duration: 0.4 }}
-          />
-        </div>
       </div>
+
+      {/* Global Progress Bar */}
+      <div className="fixed bottom-0 left-0 w-full h-1.5 z-[200] bg-slate-200 dark:bg-slate-800 overflow-hidden">
+        <motion.div 
+          className="h-full bg-blue-600 relative"
+          initial={{ width: 0 }}
+          animate={{ width: `${((currentSlide + 1) / slides.length) * 100}%` }}
+          transition={{ duration: 0.6, ease: "circOut" }}
+        >
+          <motion.div 
+            className="absolute top-0 right-0 h-full w-24 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+            animate={{ x: ['-100%', '200%'] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+          />
+        </motion.div>
+      </div>
+
+      {/* Toast Notification */}
+      <AnimatePresence>
+        {showToast && (
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+            className="fixed bottom-12 left-1/2 -translate-x-1/2 z-[200]"
+          >
+            <div className="bg-emerald-600 text-white px-6 py-3 rounded-full shadow-2xl flex items-center space-x-3">
+              <CheckCircle className="w-5 h-5" />
+              <span className="font-display font-bold text-sm">Exportation réussie !</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Keyboard Help */}
       {!isFullscreen && (

@@ -35,3 +35,26 @@ export const ELECTION_DATA: ElectionData[] = [
   { centre: 'École Kandra', inscrits: 713, votes: 507, participation: 71.06 },
   { centre: 'Hay Wiam', inscrits: 448, votes: 296, participation: 66.02 },
 ];
+
+export function exportToCSV(data: ElectionData[], filename: string = 'election_data.csv') {
+  const headers = ['Centre', 'Inscrits', 'Votes', 'Participation (%)'];
+  const csvContent = [
+    headers.join(','),
+    ...data.map(item => [
+      `"${item.centre}"`,
+      item.inscrits,
+      item.votes,
+      item.participation
+    ].join(','))
+  ].join('\n');
+
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  link.setAttribute('href', url);
+  link.setAttribute('download', filename);
+  link.style.visibility = 'hidden';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
